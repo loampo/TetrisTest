@@ -13,6 +13,15 @@ public class BlockMovement : MonoBehaviour
     {
         _gameManager = FindObjectOfType<GameManager>();
     }
+
+    private void RegisterOnGrid()
+    {
+        foreach (Transform subBlock in _centerBlock.transform)
+        {
+            _gameManager._grid[Mathf.FloorToInt(subBlock.position.x), Mathf.FloorToInt(subBlock.position.y)] = subBlock;
+        }
+    }
+
     bool isMovable()
     {
         foreach (Transform subBlock in _centerBlock.transform)
@@ -20,6 +29,10 @@ public class BlockMovement : MonoBehaviour
             if(subBlock.transform.position.x >= GameManager.width ||
                 subBlock.transform.position.x < 0 ||
                 subBlock.transform.position.y < 0) return false;
+            if (_gameManager._grid[Mathf.FloorToInt(subBlock.position.x), Mathf.FloorToInt(subBlock.position.y)] != null)
+            {
+                return false;
+            }
         } return true;
     }
     // Update is called once per frame
@@ -37,6 +50,8 @@ public class BlockMovement : MonoBehaviour
                 {
                     _isActive = false;
                     gameObject.transform.position += new Vector3(0, 1, 0);
+                    RegisterOnGrid();
+                    _gameManager.ClearLines();
                     _gameManager.SpawnBlock();
                 }
             }
@@ -48,6 +63,8 @@ public class BlockMovement : MonoBehaviour
                 {
                     _isActive = false;
                     gameObject.transform.position += new Vector3(0, 1, 0);
+                    RegisterOnGrid();
+                    _gameManager.ClearLines();
                     _gameManager.SpawnBlock();
                 }
             }
